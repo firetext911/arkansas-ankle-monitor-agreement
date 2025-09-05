@@ -11,6 +11,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
+// Import the Agreement form
+import Agreement from "@/pages/Agreement";
+
 // --- Supabase client (NO mock data) ---
 import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -91,9 +94,14 @@ function Navbar() {
           <span className="font-semibold">1st Regional – Submissions</span>
         </Link>
         <div className="flex items-center gap-2">
-          <Link to="/" className={`text-sm px-3 py-2 rounded-xl ${location.pathname === "/" ? "bg-black text-white" : "hover:bg-black/5"}`}>Dashboard</Link>
-          <Link to="/submissions" className={`text-sm px-3 py-2 rounded-xl ${location.pathname.startsWith("/submissions") ? "bg-black text-white" : "hover:bg-black/5"}`}>Submissions</Link>
-          <Link to="/admin" className={`text-sm px-3 py-2 rounded-xl ${location.pathname.startsWith("/admin") ? "bg-black text-white" : "hover:bg-black/5"}`}>Admin</Link>
+          <Link to="/" className={`text-sm px-3 py-2 rounded-xl ${location.pathname === "/" ? "bg-black text-white" : "hover:bg-black/5"}`}>Form</Link>
+          {user && (
+            <>
+              <Link to="/dashboard" className={`text-sm px-3 py-2 rounded-xl ${location.pathname === "/dashboard" ? "bg-black text-white" : "hover:bg-black/5"}`}>Dashboard</Link>
+              <Link to="/submissions" className={`text-sm px-3 py-2 rounded-xl ${location.pathname.startsWith("/submissions") ? "bg-black text-white" : "hover:bg-black/5"}`}>Submissions</Link>
+              <Link to="/admin" className={`text-sm px-3 py-2 rounded-xl ${location.pathname.startsWith("/admin") ? "bg-black text-white" : "hover:bg-black/5"}`}>Admin</Link>
+            </>
+          )}
           <AuthTray />
         </div>
       </div>
@@ -684,8 +692,9 @@ function AppRoutes() {
   const { user } = useAuth();
   return (
     <Routes>
-      <Route path="/" element={ user ? <Dashboard/> : <LoginPage/> } />
+      <Route path="/" element={<Agreement />} />
       <Route path="/login" element={<LoginPage/>} />
+      <Route path="/dashboard" element={<RequireAuth><Dashboard/></RequireAuth>} />
       <Route path="/submissions" element={<RequireAuth><SubmissionsPage/></RequireAuth>} />
       <Route path="/submissions/:id" element={<RequireAuth><SubmissionDetailRoute/></RequireAuth>} />
       <Route path="/admin" element={<RequireAuth><AdminPage/></RequireAuth>} />
