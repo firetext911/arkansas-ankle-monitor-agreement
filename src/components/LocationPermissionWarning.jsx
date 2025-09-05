@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Smartphone, Chrome, Globe, Monitor, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, Smartphone, Chrome, Globe, Monitor, AlertTriangle, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const LocationPermissionWarning = () => {

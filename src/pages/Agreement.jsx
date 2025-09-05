@@ -90,43 +90,21 @@ export default function AgreementPage() {
     }, [searchParams, setSearchParams]);
 
     useEffect(() => {
-        // Capture client-side audit information
-        const captureAuditData = async () => {
+        // Capture basic client-side audit information (without geolocation)
+        const captureBasicAuditData = () => {
             const auditInfo = {
                 user_agent: navigator.userAgent,
                 screen_resolution: `${window.screen.width}x${window.screen.height}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 platform: navigator.platform,
                 language: navigator.language,
-                geolocation_permission: 'pending'
+                geolocation_permission: 'not_requested'
             };
-
-            // Request geolocation
-            if (navigator.geolocation) {
-                try {
-                    const position = await new Promise((resolve, reject) => {
-                        navigator.geolocation.getCurrentPosition(resolve, reject, {
-                            timeout: 10000,
-                            enableHighAccuracy: true
-                        });
-                    });
-                    
-                    auditInfo.geolocation_lat = position.coords.latitude;
-                    auditInfo.geolocation_lon = position.coords.longitude;
-                    auditInfo.geolocation_accuracy = position.coords.accuracy;
-                    auditInfo.geolocation_permission = 'granted';
-                } catch (error) {
-                    auditInfo.geolocation_permission = 'denied';
-                    console.log('Geolocation denied or unavailable:', error.message);
-                }
-            } else {
-                auditInfo.geolocation_permission = 'not_supported';
-            }
 
             setAuditData(auditInfo);
         };
 
-        captureAuditData();
+        captureBasicAuditData();
     }, []);
 
     const handleUpdate = (update) => {
@@ -209,6 +187,33 @@ export default function AgreementPage() {
         return true;
     };
 
+    const captureGeolocationData = async () => {
+        const updatedAuditData = { ...auditData };
+        
+        if (navigator.geolocation) {
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        timeout: 10000,
+                        enableHighAccuracy: true
+                    });
+                });
+                
+                updatedAuditData.geolocation_lat = position.coords.latitude;
+                updatedAuditData.geolocation_lon = position.coords.longitude;
+                updatedAuditData.geolocation_accuracy = position.coords.accuracy;
+                updatedAuditData.geolocation_permission = 'granted';
+            } catch (error) {
+                updatedAuditData.geolocation_permission = 'denied';
+                console.log('Geolocation denied or unavailable:', error.message);
+            }
+        } else {
+            updatedAuditData.geolocation_permission = 'not_supported';
+        }
+        
+        return updatedAuditData;
+    };
+
     const handleFinalSubmit = async () => {
         if (!validateForm()) return;
         
@@ -221,11 +226,14 @@ export default function AgreementPage() {
             }
             const currentRecordId = savedStep.id;
 
-            // Step 2: Finalize the submission with the guaranteed ID and audit data.
+            // Step 2: Capture geolocation data now (user gesture)
+            const finalAuditData = await captureGeolocationData();
+
+            // Step 3: Finalize the submission with the guaranteed ID and audit data.
             const submissionData = {
                 id: currentRecordId,
                 ...formData,
-                audit_metadata: auditData
+                audit_metadata: finalAuditData
             };
             
             const { data: finalResponse } = await submitAgreementToComply(submissionData);
