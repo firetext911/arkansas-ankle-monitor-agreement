@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Smartphone, Chrome, Safari, Firefox, AlertTriangle, X } from 'lucide-react';
+import { MapPin, Smartphone, Chrome, Globe, Firefox, AlertTriangle, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const LocationPermissionWarning = () => {
@@ -99,7 +99,7 @@ const LocationPermissionWarning = () => {
                                     </div>
                                     
                                     <div className="flex items-start gap-2">
-                                        <Safari className="w-4 h-4 text-blue-500 mt-0.5" />
+                                        <Globe className="w-4 h-4 text-blue-500 mt-0.5" />
                                         <div>
                                             <strong>Safari Mobile:</strong>
                                             <ol className="list-decimal list-inside ml-2 mt-1 space-y-1">
