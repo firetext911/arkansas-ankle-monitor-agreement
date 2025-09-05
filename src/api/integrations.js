@@ -1,23 +1,46 @@
-import { base44 } from './base44Client';
+// Supabase-based integrations
+// These functions are now handled by Supabase Storage and other services
 
+export const UploadFile = async (file, agreementId, category = 'document') => {
+  // This is now handled by the FileUpload API in supabaseClient.js
+  const { FileUpload } = await import('./supabaseClient');
+  return FileUpload.uploadFile(file, agreementId, category);
+};
 
+export const CreateFileSignedUrl = async (filePath) => {
+  // This is now handled by Supabase Storage
+  const { supabase } = await import('../lib/supabase');
+  const { data } = supabase.storage
+    .from('agreement-files')
+    .createSignedUrl(filePath, 3600); // 1 hour expiry
+  return data;
+};
 
+// Placeholder functions for future implementation
+export const SendEmail = async (to, subject, body) => {
+  console.log('Email functionality not yet implemented');
+  // TODO: Implement email sending via Supabase Edge Functions or external service
+};
 
-export const Core = base44.integrations.Core;
+export const InvokeLLM = async (prompt) => {
+  console.log('LLM functionality not yet implemented');
+  // TODO: Implement LLM integration if needed
+};
 
-export const InvokeLLM = base44.integrations.Core.InvokeLLM;
+export const GenerateImage = async (prompt) => {
+  console.log('Image generation not yet implemented');
+  // TODO: Implement image generation if needed
+};
 
-export const SendEmail = base44.integrations.Core.SendEmail;
+export const ExtractDataFromUploadedFile = async (file) => {
+  console.log('Data extraction not yet implemented');
+  // TODO: Implement file data extraction if needed
+};
 
-export const UploadFile = base44.integrations.Core.UploadFile;
-
-export const GenerateImage = base44.integrations.Core.GenerateImage;
-
-export const ExtractDataFromUploadedFile = base44.integrations.Core.ExtractDataFromUploadedFile;
-
-export const CreateFileSignedUrl = base44.integrations.Core.CreateFileSignedUrl;
-
-export const UploadPrivateFile = base44.integrations.Core.UploadPrivateFile;
+export const UploadPrivateFile = async (file, path) => {
+  console.log('Private file upload not yet implemented');
+  // TODO: Implement private file upload if needed
+};
 
 
 

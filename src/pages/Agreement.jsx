@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { AgreementSubmission } from '@/api/entities';
+import { AgreementSubmission } from '@/api/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Toaster, toast } from 'sonner';
 import { CheckCircle, MapPin, Monitor, Clock } from 'lucide-react';
@@ -14,9 +14,10 @@ import PaymentSection from '../components/agreement/PaymentSection';
 import SignatureCapture from '../components/agreement/SignatureCapture';
 import FileUploadSection from '../components/agreement/FileUploadSection';
 import LoadingSpinner from '../components/agreement/LoadingSpinner';
+import LocationPermissionWarning from '../components/LocationPermissionWarning';
 
-import { saveInstallerStep } from '@/api/functions';
-import { submitAgreementToComply } from '@/api/functions';
+import { saveInstallerStep } from '@/api/supabaseFunctions';
+import { submitAgreementToComply } from '@/api/supabaseFunctions';
 
 const defaultFormData = {
     status: "draft",
@@ -58,9 +59,8 @@ export default function AgreementPage() {
         const loadExistingRecord = async (id) => {
             setLoading(true);
             try {
-                const records = await AgreementSubmission.filter({ id });
-                if (records && records.length > 0) {
-                    const loadedData = records[0];
+                const loadedData = await AgreementSubmission.getById(id);
+                if (loadedData) {
                     if (loadedData.status === 'signed') {
                         setIsSuccess(true);
                     } else {
@@ -268,11 +268,16 @@ export default function AgreementPage() {
             <div className="min-h-screen bg-gray-50">
                 <div className="bg-white border-b border-gray-200">
                     <div className="max-w-4xl mx-auto px-4 py-4">
-                        <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/ec48e7525_AAMlogostack.png" alt="Arkansas Ankle Monitor Logo" className="h-16 object-contain mx-auto" />
+                        <div className="text-center">
+                            <h1 className="text-2xl font-bold text-gray-800">Arkansas Ankle Monitor</h1>
+                            <p className="text-gray-600">Agreement System</p>
+                        </div>
                     </div>
                 </div>
 
                 <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+                    <LocationPermissionWarning />
+                    
                     <CollapsibleSection title="Section 1: Agent & Device Setup">
                         <InstallerSection data={formData} onUpdate={handleUpdate} />
                     </CollapsibleSection>

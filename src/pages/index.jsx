@@ -1,12 +1,14 @@
 import Layout from "./Layout.jsx";
 
 import Agreement from "./Agreement";
+import Admin from "./Admin";
 
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
     
     Agreement: Agreement,
+    Admin: Admin,
     
 }
 
@@ -36,6 +38,7 @@ function PagesContent() {
                 
                 
                 <Route path="/Agreement" element={<Agreement />} />
+                <Route path="/Admin" element={<Admin />} />
                 
             </Routes>
         </Layout>
