@@ -89,6 +89,9 @@ function Navbar() {
   return (
     <div className="sticky top-0 z-40 border-b bg-white/60 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-3">
+          <img src="/AAMlogo.png" alt="Arkansas Ankle Monitor" className="h-10 w-auto" />
+        </Link>
         <div className="flex items-center gap-2">
           <Link to="/" className={`text-sm px-3 py-2 rounded-xl ${location.pathname === "/" ? "bg-black text-white" : "hover:bg-black/5"}`}>Form</Link>
           {user && (
