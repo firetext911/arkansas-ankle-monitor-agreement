@@ -1,10 +1,18 @@
 // Supabase-based integrations
 // These functions are now handled by Supabase Storage and other services
 
-export const UploadFile = async (file, agreementId, category = 'document') => {
+export const UploadFile = async (params) => {
   // This is now handled by the FileUpload API in supabaseClient.js
   const { FileUpload } = await import('./supabaseClient');
-  return FileUpload.uploadFile(file, agreementId, category);
+  
+  // Handle both old and new parameter formats
+  if (params.file) {
+    // New format: { file, agreementId, category }
+    return FileUpload.uploadFile(params.file, params.agreementId, params.category);
+  } else {
+    // Old format: (file, agreementId, category)
+    return FileUpload.uploadFile(params, arguments[1], arguments[2]);
+  }
 };
 
 export const CreateFileSignedUrl = async (filePath) => {

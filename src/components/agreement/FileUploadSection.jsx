@@ -19,7 +19,15 @@ export default function FileUploadSection({ uploadedFiles = [], onUpdate }) {
 
         setIsUploading(true);
         try {
-            const { file_url } = await UploadFileIntegration({ file });
+            // Generate a temporary agreement ID for file uploads
+            const tempAgreementId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            
+            const { file_url } = await UploadFileIntegration({ 
+                file, 
+                agreementId: tempAgreementId, 
+                category: fileType 
+            });
+            
             const newFile = {
                 file_url,
                 file_type: fileType,

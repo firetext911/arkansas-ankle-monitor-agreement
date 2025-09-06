@@ -86,7 +86,12 @@ export const AgreementSubmission = {
 export const FileUpload = {
   // Upload file to Supabase Storage
   async uploadFile(file, agreementId, category = 'document') {
-    const fileExt = file.name.split('.').pop()
+    // Validate file object
+    if (!file || !file.name) {
+      throw new Error('Invalid file object: file or file.name is missing')
+    }
+    
+    const fileExt = file.name.split('.').pop() || 'bin'
     const fileName = `${agreementId}/${Date.now()}.${fileExt}`
     
     const { data: uploadData, error: uploadError } = await supabase.storage
