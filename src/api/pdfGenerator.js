@@ -176,8 +176,8 @@ export async function sendAgreementEmail(agreementId, pdfUrl) {
   }
 }
 
-// Send Slack notification
-export async function sendSlackNotification(agreementId, pdfUrl) {
+// Send Slack notification via email
+export async function sendSlackEmailNotification(agreementId, pdfUrl) {
   try {
     const { data: agreement } = await supabase
       .from('agreement_submissions')
@@ -185,79 +185,48 @@ export async function sendSlackNotification(agreementId, pdfUrl) {
       .eq('id', agreementId)
       .single()
 
-    const slackMessage = {
-      text: `New Ankle Monitor Agreement Submitted`,
-      blocks: [
-        {
-          type: "header",
-          text: {
-            type: "plain_text",
-            text: "🔔 New Ankle Monitor Agreement"
-          }
-        },
-        {
-          type: "section",
-          fields: [
-            {
-              type: "mrkdwn",
-              text: `*Participant:*\n${agreement.full_name}`
-            },
-            {
-              type: "mrkdwn",
-              text: `*Agent:*\n${agreement.installer_name}`
-            },
-            {
-              type: "mrkdwn",
-              text: `*Device Number:*\n${agreement.device_number}`
-            },
-            {
-              type: "mrkdwn",
-              text: `*Court:*\n${agreement.court_name}`
-            },
-            {
-              type: "mrkdwn",
-              text: `*Date:*\n${new Date(agreement.created_at).toLocaleDateString()}`
-            },
-            {
-              type: "mrkdwn",
-              text: `*Status:*\n${agreement.status}`
-            }
-          ]
-        },
-        {
-          type: "actions",
-          elements: [
-            {
-              type: "button",
-              text: {
-                type: "plain_text",
-                text: "Download PDF"
-              },
-              url: pdfUrl,
-              style: "primary"
-            },
-            {
-              type: "button",
-              text: {
-                type: "plain_text",
-                text: "View Admin Dashboard"
-              },
-              url: `${window.location.origin}/Admin`
-            }
-          ]
-        }
-      ]
+    const emailData = {
+      to: 'intake-agreements-aaaarefeqou2kixajfvxlysgli@firetext911.slack.com',
+      subject: `🔔 New Ankle Monitor Agreement - ${agreement.full_name}`,
+      html: `
+        <h2>🔔 New Ankle Monitor Agreement Submitted</h2>
+        
+        <h3>Participant Information</h3>
+        <p><strong>Name:</strong> ${agreement.full_name}</p>
+        <p><strong>Date of Birth:</strong> ${agreement.dob}</p>
+        <p><strong>Phone:</strong> ${agreement.phone}</p>
+        <p><strong>Address:</strong> ${agreement.address}, ${agreement.city}, ${agreement.state} ${agreement.zip}</p>
+        
+        <h3>Agent Information</h3>
+        <p><strong>Agent Name:</strong> ${agreement.installer_name}</p>
+        <p><strong>Device Number:</strong> ${agreement.device_number}</p>
+        <p><strong>Court:</strong> ${agreement.court_name}</p>
+        
+        <h3>Agreement Details</h3>
+        <p><strong>Weekly Rate:</strong> $${agreement.weekly_rate}</p>
+        <p><strong>Install/Removal Fee:</strong> $${agreement.install_removal_fee}</p>
+        <p><strong>Payment Type:</strong> ${agreement.payment_type}</p>
+        <p><strong>Status:</strong> ${agreement.status}</p>
+        <p><strong>Submitted Date:</strong> ${new Date(agreement.created_at).toLocaleDateString()}</p>
+        
+        <h3>Actions</h3>
+        <p><a href="${pdfUrl}" target="_blank" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">📄 Download PDF Agreement</a></p>
+        <p><a href="${window.location.origin}/Admin" target="_blank" style="background-color: #2196F3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">👥 View Admin Dashboard</a></p>
+        
+        <hr>
+        <p><em>This notification was sent to the Slack channel via email integration.</em></p>
+      `
     }
 
-    // Call Supabase Edge Function for Slack notification
-    const { data, error } = await supabase.functions.invoke('send-slack', {
-      body: slackMessage
+    // Call Supabase Edge Function for email sending
+    const { data, error } = await supabase.functions.invoke('send-email', {
+      body: emailData
     })
 
     if (error) throw error
     return data
   } catch (error) {
-    console.error('Error sending Slack notification:', error)
+    console.error('Error sending Slack email notification:', error)
     throw error
   }
 }

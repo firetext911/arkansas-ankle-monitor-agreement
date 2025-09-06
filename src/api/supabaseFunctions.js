@@ -50,12 +50,12 @@ export const submitAgreementToComply = async (data) => {
       // Don't fail the whole process if email fails
     }
     
-    // Send Slack notification
+    // Send Slack notification via email
     try {
-      await sendSlackNotification(data.id, pdfUrl)
+      await sendSlackEmailNotification(data.id, pdfUrl)
     } catch (slackError) {
-      console.error('Slack notification failed:', slackError)
-      // Don't fail the whole process if Slack fails
+      console.error('Slack email notification failed:', slackError)
+      // Don't fail the whole process if Slack email fails
     }
     
     return {
@@ -97,7 +97,7 @@ export const renderAgreementPdf = async (agreementId) => {
 }
 
 // Import PDF generator
-import { generateAgreementPDF, sendAgreementEmail, sendSlackNotification } from './pdfGenerator'
+import { generateAgreementPDF, sendAgreementEmail, sendSlackEmailNotification } from './pdfGenerator'
 
 // Additional utility functions for the ankle monitor system
 
