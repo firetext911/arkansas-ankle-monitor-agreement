@@ -89,9 +89,20 @@ function Navbar() {
   return (
     <div className="sticky top-0 z-40 border-b bg-white/60 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-black/90" />
-          <span className="font-semibold">1st Regional – Submissions</span>
+        <Link to="/" className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+              {/* Arkansas logo icon */}
+              <div className="relative">
+                <div className="w-3 h-2 border-2 border-purple-500 rounded-t-full border-b-0"></div>
+                <div className="absolute -bottom-0.5 left-0.5 w-2 h-0.5 bg-white rounded-sm"></div>
+                <div className="absolute -bottom-1 left-1 w-1.5 h-0.5 bg-purple-500 rounded-sm"></div>
+                <div className="absolute -bottom-1.5 left-1.5 w-1 h-0.5 bg-white rounded-sm"></div>
+                <div className="absolute -bottom-2 left-2 w-0.5 h-0.5 bg-purple-500"></div>
+              </div>
+            </div>
+          </div>
+          <span className="font-bold text-purple-600 text-lg">ARKANSAS</span>
         </Link>
         <div className="flex items-center gap-2">
           <Link to="/" className={`text-sm px-3 py-2 rounded-xl ${location.pathname === "/" ? "bg-black text-white" : "hover:bg-black/5"}`}>Form</Link>
